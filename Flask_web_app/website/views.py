@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Note
 from .import db
+from random import randint
 import json
 
 views = Blueprint('views',__name__)
@@ -31,19 +32,35 @@ def delete_note():
             db.session.commit()
             
     return jsonify({'success': True})
-@views.route('/dashboard')
-def get_sensor_reading():
-    temperature = 25
+
+@views.route('/dashboard',methods=['GET','POST'])
+def dashboard():
+    #* Chuyen data vao day de pass qua frontend
+        #* các phương thức lấy data thực thi ở đây rồi truyền vào 4 biến ở dưới 
+    temperature = randint(20,39)
     pressure = 1
-    humidity = 60
-    light = 60
+    humidity = randint(50,90)
+    light = randint(50,90)
+    #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
     data =(temperature,pressure,humidity,light)
-    # return jsonify(
-    #             {
-    #             'status': 'OK',
-    #             'temperature': temperature,
-    #             'pressure': pressure,
-    #             'humidity': humidity,
-    #             }
-    #         )
     return render_template('dashboard.html',user = current_user,data=data)
+
+
+
+@views.route('/dashboardupdate',methods=['GET','POST'])
+def get_sensor_reading():
+    #* Chuyen data vao day de pass qua frontend
+        #* các phương thức lấy data thực thi ở đây rồi truyền vào 4 biến ở dưới 
+    temperature = randint(20,39)
+    pressure = 1
+    humidity = randint(50,90)
+    light = randint(50,90)
+    #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
+    # data =(temperature,pressure,humidity,light)
+    # return render_template('dashboard.html',user = current_user,data=data)
+    return jsonify({
+        'temperature':temperature,
+        'pressure':pressure,
+        'humidity':humidity,
+        'light':light,
+    })

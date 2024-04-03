@@ -18,3 +18,5 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     firstname = db.Column(db.String(150))
     notes = db.relationship('Note')
+
+#* potentially create temperature object, humidity object, light object
