@@ -1,0 +1,90 @@
+{%extends "base.html" %} {% block title %}Dashboard{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .custom-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .custom-row {
+            margin-left: 0px; /* Adjust this value as needed */
+            margin-right: 0px; /* Adjust this value as needed */
+        }
+        .temperature-card-yellow {
+            background-color: #FFD700; 
+        }
+        .temperature-card-green {
+            background-color: #90EE90;
+        }
+        .temperature-card-red {
+            background-color: #FF0000;
+        }
+        .humidity-card {
+            background-color: #87CEEB; /* Sky blue */
+        }
+        .pressure-card {
+            background-color: #90EE90; /* Light green */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row custom-row">
+            <div class="col-md-3">
+                {% if data[0] >= 30 and data[0] <=35 %}
+                <div class="card custom-card temperature-card-yellow">
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                    </div>
+                </div>
+                {% elif data[0] <30 %}
+                <div class="card custom-card temperature-card-green">
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card custom-card temperature-card-red">
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                    </div>
+                </div>
+                {% endif%}
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card humidity-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Humidity</h5>
+                        <p class="card-text">Current humidity:<br /> <strong>{{data[2]}}%</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card pressure-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Pressure</h5>
+                        <p class="card-text">Current pressure:<br /> <strong>{{data[1]}}Pa</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card light-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Light</h5>
+                        <p class="card-text">
+                            Current light intensity:
+                            <br>
+                            <strong>{{data[3]}}%</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
