@@ -28,30 +28,30 @@
             background-color: #90EE90; /* Light green */
         }
     </style>
-</head>
 <body>
     <div class="container mt-5">
         <div class="row custom-row">
             <div class="col-md-3">
+                <input type="hidden" id="temperature1"/>
                 {% if data[0] >= 30 and data[0] <=35 %}
                 <div class="card custom-card temperature-card-yellow">
                     <div class="card-body">
                         <h5 class="card-title">Temperature</h5>
-                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                        <p class="card-text">Current temperature:<br /> <strong><span id="temperature">Loading...</span>°C</strong></p>
                     </div>
                 </div>
                 {% elif data[0] <30 %}
                 <div class="card custom-card temperature-card-green">
                     <div class="card-body">
                         <h5 class="card-title">Temperature</h5>
-                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                        <p class="card-text">Current temperature:<br /> <strong><span id="temperature">Loading...</span>°C</strong></p>
                     </div>
                 </div>
                 {% else %}
                 <div class="card custom-card temperature-card-red">
                     <div class="card-body">
                         <h5 class="card-title">Temperature</h5>
-                        <p class="card-text">Current temperature:<br /> <strong>{{data[0]}}°C</strong></p>
+                        <p class="card-text">Current temperature:<br /> <strong><span id="temperature">Loading...</span>°C</strong></p>
                     </div>
                 </div>
                 {% endif%}
@@ -60,7 +60,7 @@
                 <div class="card custom-card humidity-card">
                     <div class="card-body">
                         <h5 class="card-title">Humidity</h5>
-                        <p class="card-text">Current humidity:<br /> <strong>{{data[2]}}%</strong></p>
+                        <p class="card-text">Current humidity:<br /> <span id="humidity">Loading...</span></p>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 <div class="card custom-card pressure-card">
                     <div class="card-body">
                         <h5 class="card-title">Pressure</h5>
-                        <p class="card-text">Current pressure:<br /> <strong>{{data[1]}}Pa</strong></p>
+                        <p class="card-text">Current pressure:<br /> <span id="pressure">Loading...</span></p>
                     </div>
                 </div>
             </div>
@@ -78,13 +78,52 @@
                         <h5 class="card-title">Light</h5>
                         <p class="card-text">
                             Current light intensity:
-                            <br>
-                            <strong>{{data[3]}}%</strong>
+                            <br />
+                            <span id="light">Loading...</span>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+</body>
+<script>
+    let temp = 0
+    let humid = 0
+    let pr = 0
+    let li = 0
+    function initializeDashboard() {
+        // Call fetchData initially
+        const data = fetchData();
+        console.log(data)
+        // Set an interval to call fetchData every 5 seconds (adjust as needed)
+    }
+    // Assume fetchData is defined in an external JavaScript file
+    async function fetchData() {
+        try {
+            const response = await fetch('/dashboardupdate', {
+                method: 'POST',
+            });
+            const data = await response.json();
+            // Extract specific values from the data object
+            const temperature = data.temperature;
+            const pressure = data.pressure;
+            const humidity = data.humidity;
+            const light = data.light;
+            
+            // Update the UI elements with the received data
+            document.getElementById('temperature').textContent = temperature;
+            document.getElementById('temperature1').value = temperature;
+            document.getElementById('pressure').textContent = pressure;
+            document.getElementById('humidity').textContent = humidity;
+            document.getElementById('light').textContent = light;
+            return {temperature, humidity ,pressure, light};
+            // Now you can safely log the temperature
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    setInterval(initializeDashboard, 5000);
+    // Call fetchData when the page loads
+</script>
 {% endblock %}
