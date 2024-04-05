@@ -4,8 +4,25 @@ from .models import Note
 from .import db
 from random import randint
 import json
+SOTRAGE1 = 'res1.txt'
+SOTRAGE2 = 'res2.txt'
+SOTRAGE4 = 'res4.txt'
 
 views = Blueprint('views',__name__)
+
+def read_numbers(file_path):
+    try:
+        # Read the entire content of the file
+        with open(file_path, 'r') as file:
+            content = file.read().strip()
+
+        # Extract numbers from the content
+        numbers = [int(num) for num in content.split() if num.isdigit()]
+
+        return numbers
+    except FileNotFoundError:
+        return None
+
 
 @views.route('/', methods=['GET','POST'])
 @login_required
@@ -37,13 +54,8 @@ def delete_note():
 def dashboard():
     #* Chuyen data vao day de pass qua frontend
         #* các phương thức lấy data thực thi ở đây rồi truyền vào 4 biến ở dưới 
-    temperature = randint(20,39)
-    pressure = 1
-    humidity = randint(50,90)
-    light = randint(50,90)
     #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
-    data =(temperature,pressure,humidity,light)
-    return render_template('dashboard.html',user = current_user,data=data)
+    return render_template('dashboard.html',user = current_user)
 
 
 
@@ -51,10 +63,10 @@ def dashboard():
 def get_sensor_reading():
     #* Chuyen data vao day de pass qua frontend
         #* các phương thức lấy data thực thi ở đây rồi truyền vào 4 biến ở dưới 
-    temperature = randint(20,39)
+    temperature = read_numbers(SOTRAGE1)
     pressure = 1
-    humidity = randint(50,90)
-    light = randint(50,90)
+    humidity = read_numbers(SOTRAGE2)
+    light = read_numbers(SOTRAGE4)
     #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
     # data =(temperature,pressure,humidity,light)
     # return render_template('dashboard.html',user = current_user,data=data)
