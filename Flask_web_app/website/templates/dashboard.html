@@ -1,0 +1,254 @@
+{%extends "base.html" %} {% block title %}Dashboard{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        background-color: #90ee90;
+        color: #333;
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 10px 10px 0 0;
+        text-align: center;
+    }
+
+    .card-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .metric-value {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .control-btn {
+        margin-right: 10px;
+    }
+
+    .fa-lightbulb {
+        color: #f39c12;
+    }
+
+    .fa-tint {
+        color: #3498db;
+    }
+    .temperature-chart {
+        height: 400px; /* Adjust the height as needed */
+      }
+</style>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Temperature</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="metric-value"><span id="temperature">Loading...</span>°C</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Humidity</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="metric-value"><span id="humidity">Loading...</span>%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Pressure</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="metric-value"><span id="pressure">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Light</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="metric-value"><span id="light">Loading...</span>%</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="btn-container">
+            <button class="btn btn-warning control-btn" id="light-control-btn"><i class="fas fa-lightbulb"></i> Turn On Lights</button>
+            <button class="btn btn-primary control-btn" id="water-pump-control-btn"><i class="fas fa-tint"></i> Turn On Water Pumps</button>
+        </div>
+    </div>
+    <div class="btn-container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Canvas for temperature chart -->
+                        <canvas id="temperatureChart" class="temperature-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div class="btn-container">
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/epoch/0.8.4/js/epoch.min.js"></script>
+<script>
+    function initializeDashboard() {
+        // Call fetchData initially
+        const data = fetchData();
+        // Set an interval to call fetchData every 5 seconds (adjust as needed)
+    }
+    // Assume fetchData is defined in an external JavaScript file
+    async function fetchData() {
+        try {
+            const response = await fetch('/dashboardupdate', {
+                method: 'POST',
+            });
+            const data = await response.json();
+            // Extract specific values from the data object
+            const temperature = data.temperature;
+            const pressure = data.pressure;
+            const humidity = data.humidity;
+            const light = data.light;
+            
+            // Update the UI elements with the received data
+            document.getElementById('temperature').textContent = temperature;
+            document.getElementById('pressure').textContent = pressure;
+            document.getElementById('humidity').textContent = humidity;
+            document.getElementById('light').textContent = light;
+            // Now you can safely log the temperature
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    setInterval(initializeDashboard, 1000);
+    // Call fetchData when the page loads
+    let isLightOn = false;
+
+    async function getData() {
+        const response = await fetch('/lightupdate', {
+            method: 'POST',
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify({ isLightOn: isLightOn })  // Send isLightOn as part of request body
+        });
+        try {
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    document.getElementById('light-control-btn').addEventListener('click', function() {
+        isLightOn = !isLightOn;
+        getData();  // Call the getData function
+        if (isLightOn) {
+            document.getElementById('light-control-btn').textContent = 'Turn Off Lights';
+            // Code to turn on lights
+        } else {
+            document.getElementById('light-control-btn').textContent = 'Turn On Lights';
+            // Code to turn off lights
+        }
+    });
+
+    // JavaScript code to toggle the button text and action for water pumps
+    let isWaterPumpOn = false;
+
+    document.getElementById('water-pump-control-btn').addEventListener('click', function() {
+        isWaterPumpOn = !isWaterPumpOn;
+        if (isWaterPumpOn) {
+            document.getElementById('water-pump-control-btn').textContent = 'Turn Off Water Pumps';
+            // Code to turn on water pumps
+        } else {
+            document.getElementById('water-pump-control-btn').textContent = 'Turn On Water Pumps';
+            // Code to turn off water pumps
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const temperatureChartCtx = document.getElementById('temperatureChart').getContext('2d');
+        const temperatureChart = new Chart(temperatureChartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Temperature',
+                    data: [],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)', // Adjust colors as needed
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Function to fetch temperature data and update the chart
+        async function updateTemperatureChart() {
+            try {
+                const response = await fetch('/dashboardupdate', {
+                    method: 'POST',
+                });
+                const data = await response.json();
+                const temperature = document.getElementById('temperature').textContent;
+                const timestamp = new Date().toLocaleTimeString(); // Assuming you want to display time on x-axis
+
+                // Update chart data
+                
+                // Remove older data if more than 10 data points
+                if (temperatureChart.data.labels.length > 10) {
+                    temperatureChart.data.labels.shift();
+                    temperatureChart.data.datasets[0].data.shift();
+                }
+                temperatureChart.data.labels.push(timestamp);
+                temperatureChart.data.datasets[0].data.push(temperature);
+                temperatureChart.update();
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Update temperature chart every 5 seconds (adjust as needed)
+        setInterval(updateTemperatureChart, 2000);
+    });
+</script>
+{% endblock %}
