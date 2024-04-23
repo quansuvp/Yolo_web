@@ -15,6 +15,7 @@ MQTT_TOPIC_PUB4 = MQTT_USERNAME + "/feeds/V4"
 MQTT_TOPIC_PUB5 = MQTT_USERNAME + "/feeds/V5"
 MQTT_TOPIC_SUB = MQTT_USERNAME + "/feeds/#"
 
+light_mode = False
 
 def mqtt_connected(client, userdata, flags, rc):
     print("Connected succesfully!!")
@@ -23,11 +24,10 @@ def mqtt_connected(client, userdata, flags, rc):
 def mqtt_subscribed(client, userdata, mid, granted_qos):
     print("Subscribed to Topic!!!")
 
-# # def mqtt_recv_message(client, userdata, message):
-#     print("Received: ", message.payload.decode("utf-8"))
-#     print(" Received message " + message.payload.decode("utf-8")
-#           + " on topic '" + message.topic
-#           + "' with QoS " + str(message.qos))
+def mqtt_recv_message(client, userdata, message):
+    global light_mode
+    if message.topic == f"{MQTT_TOPIC_PUB5}":
+        light_mode = str(message.payload.decode("utf-8"))
 
 def mqtt_published(client, userdata, mid):
     print("Message published with mid: " + str(mid))
@@ -39,7 +39,7 @@ mqttClient.connect(MQTT_SERVER, int(MQTT_PORT), 60)
  #Register mqtt events
 mqttClient.on_connect = mqtt_connected
 mqttClient.on_subscribe = mqtt_subscribed
- # mqttClient.on_message = mqtt_recv_message
+mqttClient.on_message = mqtt_recv_message
 mqttClient.on_publish = mqtt_published
 
 mqttClient.loop_start()
@@ -48,6 +48,7 @@ counter = 3
 temp = 1
 humi = 1
 light = 1
+light_mode = True
 while True:
     # readSerial(mqttClient)
     counter = counter - 1
@@ -56,7 +57,8 @@ while True:
         mqttClient.publish(MQTT_TOPIC_PUB1, temp)
         mqttClient.publish(MQTT_TOPIC_PUB2, humi)
         mqttClient.publish(MQTT_TOPIC_PUB4, light)
-
+        print(light_mode)
+        # mqttClient.subscribe(MQTT_TOPIC_PUB5)
         temp = (temp + 1) % 18 + 17
         humi = (humi + 1) % 50 + 30
         light = light + 1
