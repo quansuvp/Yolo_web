@@ -42,7 +42,7 @@ import time
 
 MQTT_SERVER = "mqtt.ohstem.vn"
 MQTT_PORT = 1883
-MQTT_USERNAME = "Khang"
+MQTT_USERNAME = "Khang19"
 MQTT_PASSWORD = ""
 MQTT_TOPIC_PUB1 = MQTT_USERNAME + "/feeds/V1" #cam bien nhiet do
 MQTT_TOPIC_PUB2 = MQTT_USERNAME + "/feeds/V2" #cam bien do am   
@@ -89,4 +89,4 @@ mqttClient.on_message= mqtt_recv_message
 mqttClient.loop_start()
 
 while True:
-    time.sleep(5)
+    time.sleep(2)

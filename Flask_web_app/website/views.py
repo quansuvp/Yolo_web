@@ -57,7 +57,12 @@ def dashboard():
     #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
     return render_template('dashboard.html',user = current_user)
 
-
+@views.route('/model',methods=['GET','POST'])
+def model():
+    #* Chuyen data vao day de pass qua frontend
+        #* các phương thức lấy data thực thi ở đây rồi truyền vào 4 biến ở dưới 
+    #* Luu vao data base thì dùng db.sesion.add + db.session.commit()
+    return render_template('model.html',user = current_user)
 
 @views.route('/dashboardupdate',methods=['GET','POST'])
 def get_sensor_reading():
@@ -76,3 +81,10 @@ def get_sensor_reading():
         'humidity':humidity,
         'light':light,
     })
+
+# light = False
+# @views.route('/lightupdate',methods=['GET','POST'])
+# def get_light_button():
+    
+
+

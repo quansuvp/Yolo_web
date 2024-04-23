@@ -51,7 +51,7 @@ def readSerial(mqttClient):
     mqttClient.publish(MQTT_TOPIC_PUB1, data1)
     mqttClient.publish(MQTT_TOPIC_PUB2, data2)
     mqttClient.publish(MQTT_TOPIC_PUB4, data3)
-
+    
 
 def mqtt_connected(client, userdata, flags, rc):
     print("Connected succesfully!!")
@@ -78,6 +78,6 @@ mqttClient.loop_start()
 
 while True:
     readSerial(mqttClient)
-    time.sleep(5)
+    time.sleep(2)
     pass
 

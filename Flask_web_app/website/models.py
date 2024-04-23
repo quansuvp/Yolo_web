@@ -20,3 +20,6 @@ class User(db.Model, UserMixin):
     notes = db.relationship('Note')
 
 #* potentially create temperature object, humidity object, light object
+#class Temp
+#class ...
+
