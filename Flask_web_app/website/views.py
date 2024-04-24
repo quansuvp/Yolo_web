@@ -6,7 +6,7 @@ from random import randint
 import json
 import paho.mqtt.client as mqtt
 import time
-
+import rainy
 
 SOTRAGE1 = 'res1.txt'
 SOTRAGE2 = 'res2.txt'
@@ -117,3 +117,35 @@ def get_light_button():
     return jsonify({
         'signal': signal,
     })
+
+@views.route('/predict')
+def predict_rain():
+    rainy_prediction_mm= rainy.predict()
+    return jsonify({'rainy_prediction_mm': rainy_prediction_mm})
+
+@views.route('/updatecsv', methods=['POST'])
+def update_csv():
+    try:
+        data = request.json
+
+        # Check if all required keys are present in the received data
+        required_keys = ['date', 'province', 'max', 'min', 'rain', 'humidi', 'averageTemp']
+        for key in required_keys:
+            if key not in data:
+                return f"Error: '{key}' is missing from the received data", 400
+
+        # Ensure that numeric values are converted to appropriate types
+        data['max'] = float(data['max'])
+        data['min'] = float(data['min'])
+        data['rain'] = float(data['rain'])
+        data['humidi'] = float(data['humidi'])
+        data['averageTemp'] = float(data['averageTemp'])
+        
+        # Append data to CSV file
+        with open('hochiminh.csv', 'a') as f:
+            f.write(f"{data['date']},{data['province']},{data['max']},{data['min']},{data['rain']},{data['humidi']},{data['averageTemp']}\n")
+
+        return 'Data appended to CSV file successfully.', 200
+
+    except Exception as e:
+        return f"Error updating CSV: {str(e)}", 500

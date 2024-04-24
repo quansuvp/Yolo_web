@@ -58,7 +58,7 @@
 <body>
     <div class="container mt-5">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Temperature</h5>
@@ -68,7 +68,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Rainy Prediction (mm)</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="metric-value"><span id="rainy-prediction">Loading...</span> mm</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Humidity</h5>
@@ -78,7 +88,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Pressure</h5>
@@ -88,7 +98,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Light</h5>
@@ -123,6 +133,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/epoch/0.8.4/js/epoch.min.js"></script>
 <script>
+    let temperatureData = [];
+    let humidityData = [];
+    var rainamount;
     function initializeDashboard() {
         // Call fetchData initially
         const data = fetchData();
@@ -140,6 +153,8 @@
             const pressure = data.pressure;
             const humidity = data.humidity;
             const light = data.light;
+            temperatureData.push(parseFloat(temperature));
+            humidityData.push(parseFloat(humidity));
             
             // Update the UI elements with the received data
             document.getElementById('temperature').textContent = temperature;
@@ -153,6 +168,72 @@
         }
     }
     setInterval(initializeDashboard, 1000);
+    async function updateRainyPrediction() {
+        try {
+            const response = await fetch('/predict');
+            const data = await response.json();
+            const rainyPrediction = data.rainy_prediction_mm;
+            
+            rainamount = rainyPrediction
+            // Update the UI element with the received rainy prediction data
+            document.getElementById('rainy-prediction').textContent = parseInt(rainyPrediction);
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    // Inside the updateCSV() function or wherever appropriate
+    async function updateCSV() {
+        try {
+            const maxTemperature = Math.max(...temperatureData);
+            const minTemperature = Math.min(...temperatureData);
+            const avgTemperature = temperatureData.reduce((acc, curr) => acc + curr, 0) / temperatureData.length;
+            const avgHumidity = humidityData.reduce((acc, curr) => acc + curr, 0) / humidityData.length;
+            const province = 'Ho Chi Minh City';
+            console.log(maxTemperature, minTemperature, avgTemperature, avgHumidity, rainamount[0][0])
+
+            const newData = {
+                "date": "2024-02-19",
+                "province": "Ho Chi Minh City",
+                "max": maxTemperature,
+                "min": minTemperature,
+                "rain": rainamount[0][0],
+                "humidi": avgHumidity,
+                "averageTemp": avgTemperature,
+            };
+            
+            // Send data to Flask API endpoint for updating CSV file
+            const response = await fetch('/updatecsv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newData),
+                
+                
+            });
+            console.log(response);
+            if (response.ok) {
+                console.log('Data sent to Flask API successfully.');
+                temperatureData = [];
+                humidityData = [];
+            } else {
+                console.error('Failed to send data to Flask API.');
+            }
+        } catch (error) {
+            console.error('Error updating CSV:', error);
+        }
+    }
+
+    
+    // Call updateRainyPrediction initially
+    updateRainyPrediction();
+    // Set an interval to call updateRainyPrediction every 20 seconds
+    setInterval(updateRainyPrediction, 10000); // 20 seconds in milliseconds
+        
+
+    updateCSV(); 
+    setInterval(updateCSV, 10000);
     // Call fetchData when the page loads
     let isLightOn = false;
 

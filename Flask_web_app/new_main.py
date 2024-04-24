@@ -4,7 +4,7 @@ import time
 import random
 # import serial.tools.list_ports
 # from uart import *
-
+from random import randint
 MQTT_SERVER = "mqtt.ohstem.vn"
 MQTT_PORT = 1883
 MQTT_USERNAME = "Khang"
@@ -45,9 +45,9 @@ mqttClient.on_publish = mqtt_published
 mqttClient.loop_start()
 
 counter = 3
-temp = 1
-humi = 1
-light = 1
+temp = 30
+humi = 60
+light = 19
 light_mode = True
 while True:
     # readSerial(mqttClient)
@@ -59,9 +59,9 @@ while True:
         mqttClient.publish(MQTT_TOPIC_PUB4, light)
         print(light_mode)
         # mqttClient.subscribe(MQTT_TOPIC_PUB5)
-        temp = (temp + 1) % 18 + 17
-        humi = (humi + 1) % 50 + 30
-        light = light + 1
+        temp = randint(20,38)
+        humi = randint(50,92)
+        
     
 
     time.sleep(1)
