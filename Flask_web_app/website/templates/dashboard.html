@@ -6,11 +6,13 @@
         background-color: #90ee90;
         color: #333;
         font-family: Arial, sans-serif;
+        box-sizing: border-box;
     }
 
     .card {
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: none;
     }
 
     .card-header {
@@ -26,12 +28,12 @@
     }
 
     .card-title {
-        font-size: 2rem;
+        font-size: 1.2rem;
         font-weight: bold;
     }
 
     .metric-value {
-        font-size: 3rem;
+        font-size: 1.2rem;
         font-weight: bold;
     }
 
@@ -54,56 +56,59 @@
     .temperature-chart {
         height: 400px; /* Adjust the height as needed */
       }
+    #BgTemperature{
+        background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+        border-radius:  0 0 10px 10px;
+    }
+    #BgHumidity{
+        background-image: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+        border-radius:  0 0 10px 10px;
+    }
+    #BgLight{
+        background-image: radial-gradient( circle 763px at 18.3% 24.1%,  rgba(255,249,137,1) 7.4%, rgba(226,183,40,1) 58.3% );
+        border-radius:  0 0 10px 10px;
+    }
 </style>
 <body>
     <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-2">
+        <div class="row justify-content-around gap-2">
+            <div class="col-md-auto" >
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Temperature</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body"  id="BgTemperature">
                         <p class="metric-value"><span id="temperature">Loading...</span>°C</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-auto">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Rainy Prediction (mm)</h5>
                     </div>
                     <div class="card-body">
-                        <p class="metric-value"><span id="rainy-prediction">Loading...</span> mm</p>
+                        <p class="metric-value"><span id="rainy-prediction">Loading ...</span> mm</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Humidity</h5>
+                        <h5 class="card-title" >Humidity</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="BgHumidity">
                         <p class="metric-value"><span id="humidity">Loading...</span>%</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Pressure</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="metric-value"><span id="pressure">Loading...</span></p>
-                    </div>
-                </div>
-            </div>
+            
             <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Light</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="BgLight">
                         <p class="metric-value"><span id="light">Loading...</span>%</p>
                     </div>
                 </div>
@@ -150,7 +155,7 @@
             const data = await response.json();
             // Extract specific values from the data object
             const temperature = data.temperature;
-            const pressure = data.pressure;
+            //const pressure = data.pressure;
             const humidity = data.humidity;
             const light = data.light;
             temperatureData.push(parseFloat(temperature));
@@ -158,7 +163,7 @@
             
             // Update the UI elements with the received data
             document.getElementById('temperature').textContent = temperature;
-            document.getElementById('pressure').textContent = pressure;
+            //document.getElementById('pressure').textContent = pressure;
             document.getElementById('humidity').textContent = humidity;
             document.getElementById('light').textContent = light;
             // Now you can safely log the temperature
