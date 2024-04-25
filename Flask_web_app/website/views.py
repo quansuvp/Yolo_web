@@ -104,7 +104,6 @@ def get_sensor_reading():
     pressure = 1
     return jsonify({
         'temperature':temperature,
-        'pressure':pressure,
         'humidity':humidity,
         'light':light,
     })
