@@ -3,8 +3,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
     body {
-        background-color: #90ee90;
-        color: #333;
+        background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(157,232,172,1) 0%, rgba(90,193,82,1) 98%);;
         font-family: Arial, sans-serif;
         box-sizing: border-box;
     }
@@ -166,6 +165,8 @@
             //document.getElementById('pressure').textContent = pressure;
             document.getElementById('humidity').textContent = humidity;
             document.getElementById('light').textContent = light;
+
+            console.log(data.temperature)
             // Now you can safely log the temperature
 
         } catch (error) {
