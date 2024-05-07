@@ -48,7 +48,7 @@ def mqtt_recv_message(client, userdata, message):
     elif message.topic == f"{MQTT_TOPIC_PUB2}":
         humidity = str(message.payload.decode("utf-8"))
     elif message.topic == f"{MQTT_TOPIC_PUB4}":
-        light = temperature = str(message.payload.decode("utf-8"))
+        light = str(message.payload.decode("utf-8"))
     return temperature, humidity, light
 
 
