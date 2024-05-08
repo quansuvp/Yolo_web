@@ -112,7 +112,12 @@ def get_sensor_reading():
 def get_light_button():
     data = request.get_json()
     signal = data['isLightOn']
+    if signal == True:
+        signal =1
+    else:
+        signal=0
     mqttClient.publish(MQTT_TOPIC_PUB5, signal)
+    print(type(signal))
     return jsonify({
         'signal': signal,
     })
