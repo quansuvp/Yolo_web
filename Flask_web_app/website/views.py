@@ -27,6 +27,7 @@ MQTT_TOPIC_PUB1 = MQTT_USERNAME + "/feeds/V1" #cam bien nhiet do
 MQTT_TOPIC_PUB2 = MQTT_USERNAME + "/feeds/V2" #cam bien do am   
 MQTT_TOPIC_PUB4 = MQTT_USERNAME + "/feeds/V4" #cam bien anh sang
 MQTT_TOPIC_PUB5 = MQTT_USERNAME + "/feeds/V5"
+MQTT_TOPIC_PUB6 = MQTT_USERNAME + "/feeds/V6"
 MQTT_TOPIC_SUB = MQTT_USERNAME + "/feeds/#"
 
 def mqtt_connected(client, userdata, flags, rc):
@@ -117,6 +118,19 @@ def get_light_button():
     else:
         signal=0
     mqttClient.publish(MQTT_TOPIC_PUB5, signal)
+    print(type(signal))
+    return jsonify({
+        'signal': signal,
+    })
+@views.route('/waterupdate',methods=['GET','POST'])
+def get_water_button():
+    data = request.get_json()
+    signal = data['isWaterOn']
+    if signal == True:
+        signal =1
+    else:
+        signal=0
+    mqttClient.publish(MQTT_TOPIC_PUB6, signal)
     print(type(signal))
     return jsonify({
         'signal': signal,

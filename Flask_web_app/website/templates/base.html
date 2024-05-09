@@ -15,6 +15,27 @@
             crossorigin="anonymous"
         />
         <title>{% block title %}Home{% endblock %}</title/>
+    
+        <style>
+            .logo {
+                width: 97%;
+                height: auto;
+                margin: 30px;
+            }
+            .logotitle {
+                text-align: center;
+                font-weight: bold;
+                font-size: 64px;
+                font-family: fantasy;
+                word-spacing: 2px;
+                letter-spacing: 4px;
+                color: #1BBFDA;
+                text-shadow: 2px 2px -4px #000000;
+                -webkit-text-stroke-width: 0.5px;
+                -webkit-text-stroke-color: black;
+                text
+            }
+        </style>
     </head>    
     
     <body>
@@ -39,6 +60,9 @@
                 </div>
             </div>
         </nav>
+        <div class = "logo">
+            <h2 class = "logotitle"> FARMER'S WEATHER TRACKING TOOL</h2>
+        </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}

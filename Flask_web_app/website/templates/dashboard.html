@@ -3,11 +3,10 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
     body {
-        background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(157,232,172,1) 0%, rgba(90,193,82,1) 98%);;
+        background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(157,232,172,1) 0%, rgba(90,193,82,1) 100%);;
         font-family: Arial, sans-serif;
         box-sizing: border-box;
     }
-
     .card {
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -270,11 +269,26 @@
     });
 
     // JavaScript code to toggle the button text and action for water pumps
-    let isWaterPumpOn = false;
+    let isWaterOn = false;
+
+    async function getData1() {
+        const response = await fetch('/waterupdate', {
+            method: 'POST',
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify({ isWaterOn: isWaterOn })  // Send isLightOn as part of request body
+        });
+        try {
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     document.getElementById('water-pump-control-btn').addEventListener('click', function() {
-        isWaterPumpOn = !isWaterPumpOn;
-        if (isWaterPumpOn) {
+        isWaterOn = !isWaterOn;
+        getData1();
+        if (isWaterOn) {
             document.getElementById('water-pump-control-btn').textContent = 'Turn Off Water Pumps';
             // Code to turn on water pumps
         } else {

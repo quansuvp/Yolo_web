@@ -13,6 +13,7 @@ MQTT_TOPIC_PUB1 = MQTT_USERNAME + "/feeds/V1"
 MQTT_TOPIC_PUB2 = MQTT_USERNAME + "/feeds/V2"
 MQTT_TOPIC_PUB4 = MQTT_USERNAME + "/feeds/V4"
 MQTT_TOPIC_PUB5 = MQTT_USERNAME + "/feeds/V5"
+MQTT_TOPIC_PUB6 = MQTT_USERNAME + "/feeds/V6"
 MQTT_TOPIC_SUB = MQTT_USERNAME + "/feeds/#"
 
 light_mode = False
@@ -25,9 +26,11 @@ def mqtt_subscribed(client, userdata, mid, granted_qos):
     print("Subscribed to Topic!!!")
 
 def mqtt_recv_message(client, userdata, message):
-    global light_mode
+    global light_mode, water_mode
     if message.topic == f"{MQTT_TOPIC_PUB5}":
         light_mode = str(message.payload.decode("utf-8"))
+    if message.topic == f"{MQTT_TOPIC_PUB6}":
+        water_mode = str(message.payload.decode("utf-8"))
 
 def mqtt_published(client, userdata, mid):
     print("Message published with mid: " + str(mid))
@@ -48,6 +51,7 @@ counter = 3
 temp = 30
 humi = 60
 light = 19
+water_mode = True
 light_mode = True
 while True:
     # readSerial(mqttClient)
@@ -58,7 +62,9 @@ while True:
         mqttClient.publish(MQTT_TOPIC_PUB2, humi)
         mqttClient.publish(MQTT_TOPIC_PUB4, light)
         print(light_mode)
+        print(water_mode)
         # mqttClient.subscribe(MQTT_TOPIC_PUB5)
+        # mqttClient.subscribe(MQTT_TOPIC_PUB6)
         temp = randint(20,38)
         humi = randint(50,92)
         
