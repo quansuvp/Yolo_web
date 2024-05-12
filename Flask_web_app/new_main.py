@@ -2,6 +2,7 @@ import sys
 import paho.mqtt.client as mqtt
 import time
 import random
+from uart_hehe import *
 # import serial.tools.list_ports
 # from uart import *
 from random import randint
@@ -29,8 +30,20 @@ def mqtt_recv_message(client, userdata, message):
     global light_mode, water_mode
     if message.topic == f"{MQTT_TOPIC_PUB5}":
         light_mode = str(message.payload.decode("utf-8"))
+        uart_write(2 - int(light_mode))
     if message.topic == f"{MQTT_TOPIC_PUB6}":
         water_mode = str(message.payload.decode("utf-8"))
+        uart_write(4 - int(water_mode))
+    # if(message.topic == "Khang/feeds/V1"):
+    #     if(message.payload.decode("utf-8") == "1"):
+    #         uart_write(1)
+    #     elif(message.payload.decode("utf-8") == "0"):
+    #         uart_write(2)
+    # if(message.topic == "Khang/feeds/V1"):
+    #     if(message.payload.decode("utf-8") == "1"):
+    #         uart_write(3)
+    #     elif(message.payload.decode("utf-8") == "0"):
+    #         uart_write(4)
 
 def mqtt_published(client, userdata, mid):
     print("Message published with mid: " + str(mid))
@@ -47,30 +60,48 @@ mqttClient.on_publish = mqtt_published
 
 mqttClient.loop_start()
 
-counter = 3
-temp = 30
-humi = 60
-light = 19
+# counter = 3
+# temp = 30
+# humi = 60
+# light = 19
 water_mode = True
 light_mode = True
-while True:
-    # readSerial(mqttClient)
-    counter = counter - 1
-    if counter <= 0:
-        counter = 3
-        mqttClient.publish(MQTT_TOPIC_PUB1, temp)
-        mqttClient.publish(MQTT_TOPIC_PUB2, humi)
-        mqttClient.publish(MQTT_TOPIC_PUB4, light)
-        print(light_mode)
-        print(water_mode)
-        # mqttClient.subscribe(MQTT_TOPIC_PUB5)
-        # mqttClient.subscribe(MQTT_TOPIC_PUB6)
-        temp = randint(20,38)
-        humi = randint(50,92)
+# while True:
+#     # readSerial(mqttClient)
+#     counter = counter - 1
+#     if counter <= 0:
+#         counter = 3
+#         mqttClient.publish(MQTT_TOPIC_PUB1, temp)
+#         mqttClient.publish(MQTT_TOPIC_PUB2, humi)
+#         mqttClient.publish(MQTT_TOPIC_PUB4, light)
+#         print(light_mode)
+#         print(water_mode)
+#         # mqttClient.subscribe(MQTT_TOPIC_PUB5)
+#         # mqttClient.subscribe(MQTT_TOPIC_PUB6)
+#         temp = randint(20,38)
+#         humi = randint(50,92)
         
+    
+
+    # time.sleep(1)
+
+
+
+# counter = 3
+# temp = 1
+# humi = 1
+
+while True:
+    readSerial(mqttClient)
+    # counter = counter - 1
+    # if counter <= 0:
+    #     counter = 3
+    #     mqttClient.publish(MQTT_TOPIC_PUB1, temp)
+    #     mqttClient.publish(MQTT_TOPIC_PUB2, humi)
+    #     temp = temp + 1
+    #     humi = humi + 1
     
 
     time.sleep(1)
 
-
-
+    pass
